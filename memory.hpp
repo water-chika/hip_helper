@@ -15,7 +15,10 @@ auto hip_malloc(size_t size = 1) {
 }
 
 void hip_free(auto* ptr) {
-    hipFree(ptr);
+    auto res = hipFree(ptr);
+    if (res != hipSuccess) {
+        throw std::runtime_error{"hipFree failed"};
+    }
 }
 
 enum class hip_memcpy_kind : uint32_t {
@@ -29,6 +32,9 @@ enum class hip_memcpy_kind : uint32_t {
 
 void hip_memcpy(void* dst, const void* src, size_t size_in_bytes, hip_memcpy_kind kind) {
     auto res = hipMemcpy(dst, src, size_in_bytes, static_cast<hipMemcpyKind>(kind));
+    if (res != hipSuccess) {
+        throw std::runtime_error{"hipMemcpy failed"};
+    }
 }
 
 namespace device {
@@ -46,7 +52,7 @@ public:
     }
     ~array() {
         if (m_ptr != nullptr) {
-            //hip_free(m_ptr);
+            hip_free(m_ptr);
             m_ptr = nullptr;
         }
     }
