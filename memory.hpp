@@ -7,7 +7,7 @@ namespace hip_helper {
 template<typename T>
 auto hip_malloc(size_t size = 1) {
     void* ptr{};
-    auto res = hipMalloc(&ptr, size);
+    auto res = hipMalloc(&ptr, sizeof(T)*size);
     if (res != hipSuccess) {
         throw std::runtime_error{"hipMalloc failed"};
     }
@@ -42,9 +42,9 @@ namespace device {
 template<typename T, size_t N>
 class array {
 public:
-    array() : m_ptr{hip_malloc<T>(N*sizeof(T))}
+    array() : m_ptr{hip_malloc<T>(N)}
     {}
-    array(const array& v) : m_ptr{hip_malloc<T>(N*sizeof(T))} {
+    array(const array& v) : m_ptr{hip_malloc<T>(N)} {
         
     }
     array(array&& v) : m_ptr{v.m_ptr} {
@@ -60,14 +60,21 @@ public:
         hip_memcpy(m_ptr, rhs.data(), sizeof(T)*N, hip_memcpy_kind::host_to_device);
         return *this;
     }
+    array& operator=(const array& rhs) {
+        hip_memcpy(m_ptr, rhs.data(), sizeof(T)*N, hip_memcpy_kind::device_to_device);
+        return *this;
+    }
     operator std::array<T, N>() {
-        std::array<T,N> lhs;
-        auto& rhs = *this;
+        std::array<T,N> lhs{};
+        const auto& rhs = *this;
         hip_memcpy(lhs.data(), rhs.data(), sizeof(T)*N, hip_memcpy_kind::device_to_host);
         return lhs;
     }
-    auto size() {
+    size_t size() const {
         return N;
+    }
+    auto data() const {
+        return m_ptr;
     }
     auto data() {
         return m_ptr;
