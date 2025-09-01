@@ -15,6 +15,18 @@ struct get_exec{
         asm("s_mov_b64 %0, exec" : "=s"(exec));
         return exec;
     }
+
+    __device__
+    get_exec() {
+        m_res = invoke();
+    }
+
+    __device__
+    operator T() {
+        return m_res;
+    }
+
+    T m_res;
 };
 
 __device__
