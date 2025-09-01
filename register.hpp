@@ -2,10 +2,20 @@
 
 #include <hip/hip_runtime.h>
 
+#include "cpp_helper/cpp_helper.hpp"
+
 namespace hip_helper{
 
+template<typename T=uint64_t>
+    requires cpp_helper::same_as_one_of<T, uint32_t, uint64_t>
 __device__
-inline uint32_t get_pc() {
+inline auto get_exec() {
+    T exec;
+    asm("s_mov_e64_b64 %0, EXEC" : "=s"(exec));
+    return exec;
+}
+__device__
+inline auto get_pc() {
     uint64_t pc;
     asm("s_getpc_b64 %0" : "=s"(pc));
     return pc;
