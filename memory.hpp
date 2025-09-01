@@ -70,6 +70,11 @@ public:
         hip_memcpy(lhs.data(), rhs.data(), sizeof(T)*N, hip_memcpy_kind::device_to_host);
         return lhs;
     }
+    T operator[](size_t i) {
+        T v{};
+        hip_memcpy(&v, m_ptr, sizeof(T), hip_memcpy_kind::device_to_host);
+        return v;
+    }
     size_t size() const {
         return N;
     }

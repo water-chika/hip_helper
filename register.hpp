@@ -8,12 +8,15 @@ namespace hip_helper{
 
 template<typename T=uint64_t>
     requires cpp_helper::same_as_one_of<T, uint32_t, uint64_t>
-__device__
-inline auto get_exec() {
-    T exec;
-    asm("s_mov_e64_b64 %0, EXEC" : "=s"(exec));
-    return exec;
-}
+struct get_exec{
+    __device__
+    static inline auto invoke() {
+        uint64_t exec;
+        asm("s_mov_b64 %0, exec" : "=s"(exec));
+        return exec;
+    }
+};
+
 __device__
 inline auto get_pc() {
     uint64_t pc;
