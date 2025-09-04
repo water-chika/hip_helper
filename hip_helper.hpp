@@ -16,16 +16,16 @@ struct hybrid_call {
         return device_res[0];
     }
 
-    hybrid_call(Params... params) {
+    inline hybrid_call(Params... params) {
         m_res = call(params...);
     }
 
     __device__
-    hybrid_call(Params... params) {
+    inline hybrid_call(Params... params) {
         m_res = T{params...};
     }
 
-    operator Result() {
+    inline operator Result() {
         return m_res;
     }
 
