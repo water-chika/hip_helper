@@ -6,8 +6,6 @@ add_library(hip_helper INTERFACE
 	hip_helper.hpp
 )
 
-add_subdirectory(cpp_helper)
-
 target_link_libraries(hip_helper INTERFACE cpp_helper)
 
 find_package(hip REQUIRED)
