@@ -1,4 +1,7 @@
 #pragma once
+#include <hip/hip_runtime.h>
+
+#include "hip_helper/memory.hpp"
 
 namespace hip_helper{
 
