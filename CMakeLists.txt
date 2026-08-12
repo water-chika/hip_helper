@@ -9,5 +9,13 @@ add_library(hip_helper
 
 target_include_directories(hip_helper INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(hip_helper INTERFACE cpp_helper)
+target_link_libraries(hip_helper INTERFACE cpp_helper
+)
+
+find_package(hip REQUIRED)
+
+target_link_libraries(hip_helper PUBLIC
+    hip::device
+    hip::host
+)
 
